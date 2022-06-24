@@ -238,21 +238,24 @@ void loop() {
   */
 
   
-  clearLEDs();
+  
   pickDigit(0);
+  clearLEDs();
   pickNumber((value % 10000) / 1000); // Get the first digit and update
   digits[0] = (value % 10000) / 1000;
 
-  clearLEDs();
   pickDigit(1);
+  clearLEDs();
   pickNumber((value % 1000) / 100); // Get the second digit and update
   digits[1] = (value % 1000) / 100;
 
   pickDigit(2);
+  clearLEDs();
   pickNumber((value % 100) / 10); // Get the third digit and update
   digits[2] = ((value % 100) / 10);
 
   pickDigit(3);
+  clearLEDs();
   pickNumber((value % 10) / 1); // Get the fourth digit and update
   digits[3] = ((value % 10) / 1);
 
