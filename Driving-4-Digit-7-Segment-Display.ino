@@ -1,12 +1,13 @@
-//Temperature Sensor Pins
-const int tempRead = A0;
-const int ButtonRead = A1;
-
 // Display Pins
+
+// Adjust the pin values accordingly
+// These pins refer to which digit on the display to update
 const int D1 = 2;
 const int D2 = 3;
 const int D3 = 4;
 const int D4 = 5;
+
+// These pins refer to which segment on the digit to update
 const int A = 6;
 const int B = 7;
 const int C = 8;
@@ -16,31 +17,19 @@ const int F = 11;
 const int G = 12;
 const int P = 0;
 
-// Other Values
-int del = 5;
 
-// Temp Values
-float rawTempVal = 0;
-int tempVal = 0;
-float celVal = 0;
-float fahVal = 0;
+int del = 5; // Delay between updating display (ms)
+int value = 2345; // This is the value that will be printed onto the display - The maxmimum value is 9999
 
-// Button Values
-int buttonState;
-int lastButtonState;
-int tempState;
+int digits[] = {0, 0, 0, 0}; // For debugging purposes
 
-
-
-//Displaying Temperature
-
-void pickDigit(int x) { //light up a 7-segment display
+void pickDigit(int x) { 
+  // Pick which digit we want to update
+  // Note that setting the digit high, means that it is not selected. Setting it low, means we select it. 
   digitalWrite(D1, HIGH);
   digitalWrite(D2, HIGH);
   digitalWrite(D3, HIGH);
   digitalWrite(D4, HIGH);
-
-
   switch (x)
   {
     case 0:
@@ -58,8 +47,6 @@ void pickDigit(int x) { //light up a 7-segment display
   }
 }
 
-
-
 void clearLEDs() //clear the 7-segment display screen
 {
   digitalWrite(A, LOW);
@@ -72,6 +59,7 @@ void clearLEDs() //clear the 7-segment display screen
   digitalWrite(P, LOW);
 }
 
+// --- Different combinations of segments for each number 0 - 9 ---- // 
 void zero() {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -105,7 +93,7 @@ void two()
   digitalWrite(G, HIGH);
   digitalWrite(P, LOW);
 }
-void three() //the 7-segment led display 3
+void three() 
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -115,7 +103,7 @@ void three() //the 7-segment led display 3
   digitalWrite(F, LOW);
   digitalWrite(G, HIGH);
 }
-void four() //the 7-segment led display 4
+void four() 
 {
   digitalWrite(A, LOW);
   digitalWrite(B, HIGH);
@@ -126,7 +114,7 @@ void four() //the 7-segment led display 4
   digitalWrite(G, HIGH);
 }
 
-void five() //the 7-segment led display 5
+void five()
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, LOW);
@@ -137,7 +125,7 @@ void five() //the 7-segment led display 5
   digitalWrite(G, HIGH);
 }
 
-void six() //the 7-segment led display 6
+void six()
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, LOW);
@@ -148,7 +136,7 @@ void six() //the 7-segment led display 6
   digitalWrite(G, HIGH);
 }
 
-void seven() //the 7-segment led display 7
+void seven()
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -159,7 +147,7 @@ void seven() //the 7-segment led display 7
   digitalWrite(G, LOW);
 }
 
-void eight() //the 7-segment led display 8
+void eight()
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -170,7 +158,7 @@ void eight() //the 7-segment led display 8
   digitalWrite(G, HIGH);
 }
 
-void nine() //the 7-segment led display 9
+void nine()
 {
   digitalWrite(A, HIGH);
   digitalWrite(B, HIGH);
@@ -179,26 +167,6 @@ void nine() //the 7-segment led display 9
   digitalWrite(E, LOW);
   digitalWrite(F, HIGH);
   digitalWrite(G, HIGH);
-}
-void fahrenheit(){
-  digitalWrite(A, HIGH);
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
-  digitalWrite(D, LOW);
-  digitalWrite(E, HIGH);
-  digitalWrite(F, HIGH);
-  digitalWrite(G, HIGH);
-  
-}
-
-void celsius(){
-  digitalWrite(A, HIGH);
-  digitalWrite(B, LOW);
-  digitalWrite(C, LOW);
-  digitalWrite(D, HIGH);
-  digitalWrite(E, HIGH);
-  digitalWrite(F, HIGH);
-  digitalWrite(G, LOW);
 }
 
 void pickNumber(int x)
@@ -238,11 +206,10 @@ void pickNumber(int x)
   }
 }
 
-// Main Loops
-
-
 void setup() {
   Serial.begin(9600);
+  
+  // Set pin values on arduino
   pinMode(D1, OUTPUT);
   pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
@@ -255,73 +222,51 @@ void setup() {
   pinMode(F, OUTPUT);
   pinMode(G, OUTPUT);
   pinMode(P, OUTPUT);
-  pinMode(tempRead, INPUT);
-  pinMode(ButtonRead, INPUT_PULLUP);
-
-
-  buttonState = digitalRead(ButtonRead);
 }
 
 
 void loop() {
-  // TOGGLE BUTTON
-  lastButtonState = buttonState;
-  buttonState = digitalRead(ButtonRead);
+  // Update the 4 DIGIT DISPLAY
+  
+  /* Basic process:
+  1. Clear the display
+  2. Pick digit 0 on the display
+  3. Get the first digit on the value we want to print
+  4. Set the digit to the display
+  5. Repeat 2-5 for the other digits
+  6. Add a small delay, so that we aren't updating the display so much (although this may be redunant for the purposes of time keeping) 
+  */
 
-  if (lastButtonState == HIGH && buttonState == LOW){
-    Serial.println("BUTTON PRESSED");
+  
+  clearLEDs();
+  pickDigit(0);
+  pickNumber((value % 10000) / 1000); // Get the first digit and update
+  digits[0] = (value % 10000) / 1000;
 
-    //Toggle Temp State
-    tempState = !tempState;    
+  clearLEDs();
+  pickDigit(1);
+  pickNumber((value % 1000) / 100); // Get the second digit and update
+  digits[1] = (value % 1000) / 100;
+
+  pickDigit(2);
+  pickNumber((value % 100) / 10); // Get the third digit and update
+  digits[2] = ((value % 100) / 10);
+
+  pickDigit(3);
+  pickNumber((value % 10) / 1); // Get the fourth digit and update
+  digits[3] = ((value % 10) / 1);
+
+
+  // Print each digit individually, make sure it's working as intended. 
+  for (int i = 0; i < 4; i++){
+    Serial.print(digits[i]);
+    Serial.print(" ");
   }
+  Serial.println();
+  
+  delay(del); // Optional line
 
   
-  // TEMPERATURE
-  rawTempVal = analogRead(tempRead);
-  rawTempVal = (rawTempVal / 1024.0) * 5000;
-  celVal = rawTempVal / 10;
-  fahVal = (celVal * 9) / 5 + 32;
-
-  // SELECT TEMPERATURE TYPE
- 
-  if (tempState) {
-    tempVal = (int)celVal;
-  }
-  else {
-    tempVal = (int)fahVal;
-  }
-  
-  Serial.println(tempVal);
-
-  
-  // DISPLAY
-  
-  //clearLEDs();//clear the 7-segment display screen
-  pickDigit(4);//Light up 7-segment display d1
-  if (tempState){
-    celsius();
-  }
-  else{
-    fahrenheit();
-  }
-  
-  delay(del);//delay 5ms
-  
-
-  //clearLEDs();//clear the 7-segment display screen
-  pickDigit(0);//Light up 7-segment display d2
-  pickNumber((tempVal % 1000) / 100); // get the value of hundred
-  delay(del);//delay 5ms
-
-  //clearLEDs();//clear the 7-segment display screen
-  pickDigit(1);//Light up 7-segment display d3
-  pickNumber(tempVal % 100 / 10); //get the value of ten
-  delay(del);//delay 5ms
-
-  clearLEDs();//clear the 7-segment display screen
-  pickDigit(2);//Light up 7-segment display d4
-  pickNumber(tempVal % 10 / 1); //Get the value of single digit
-  delay(del);//delay 5ms
 
  
 
