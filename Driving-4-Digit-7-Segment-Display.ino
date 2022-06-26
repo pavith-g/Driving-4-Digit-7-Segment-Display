@@ -21,8 +21,6 @@ const int P = 0;
 int del = 5; // Delay between updating display (ms)
 int value = 2345; // This is the value that will be printed onto the display - The maxmimum value is 9999
 
-int digits[] = {0, 0, 0, 0}; // For debugging purposes
-
 void pickDigit(int x) { 
   // Pick which digit we want to update
   // Note that setting the digit high, means that it is not selected. Setting it low, means we select it. 
@@ -169,8 +167,9 @@ void nine()
   digitalWrite(G, HIGH);
 }
 
-void pickNumber(int x)
-{
+void pickNumber(int x){
+  // Based on the digit we have, print it to the display
+
   switch (x)
   {
     default:
@@ -226,7 +225,7 @@ void setup() {
 
 
 void loop() {
-  // Update the 4 DIGIT DISPLAY
+  // Updating the 4 DIGIT DISPLAY
   
   /* Basic process:
   1. Clear the display
@@ -237,8 +236,6 @@ void loop() {
   6. Add a small delay, so that we aren't updating the display so much (although this may be redunant for the purposes of time keeping) 
   */
 
-  
-  
   pickDigit(0);
   clearLEDs();
   pickNumber((value % 10000) / 1000); // Get the first digit and update
@@ -259,13 +256,6 @@ void loop() {
   pickNumber((value % 10) / 1); // Get the fourth digit and update
   digits[3] = ((value % 10) / 1);
 
-
-  // Print each digit individually, make sure it's working as intended. 
-  for (int i = 0; i < 4; i++){
-    Serial.print(digits[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
   
   delay(del); // Optional line
 
