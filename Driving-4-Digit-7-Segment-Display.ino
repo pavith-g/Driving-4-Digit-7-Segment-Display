@@ -227,7 +227,7 @@ void loop() {
 
   if (value > 9999){
     value = 9999;
-    print("Value overflow");
+    Serial.print("Value overflow");
   }
   // Updating the 4 DIGIT DISPLAY
   
