@@ -224,6 +224,11 @@ void setup() {
 
 
 void loop() {
+
+  if (value > 9999){
+    value = 9999;
+    print("Value overflow");
+  }
   // Updating the 4 DIGIT DISPLAY
   
   /* Basic process:
@@ -255,7 +260,6 @@ void loop() {
   pickNumber((value % 10) / 1); // Get the fourth digit and update
   digits[3] = ((value % 10) / 1);
 
-  
   delay(del); // Optional line
 
   
