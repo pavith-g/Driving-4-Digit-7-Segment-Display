@@ -2,20 +2,19 @@
 
 // Adjust the pin values accordingly
 // These pins refer to which digit on the display to update
-const int D1 = 2;
-const int D2 = 3;
-const int D3 = 4;
-const int D4 = 5;
-
-// These pins refer to which segment on the digit to update
-const int A = 6;
-const int B = 7;
-const int C = 8;
-const int D = 9;
-const int E = 10;
-const int F = 11;
-const int G = 12;
-const int P = 0;
+#define D1 2
+#define D2 3
+#define D3 4
+#define D4 5
+// These pins refer to which segment to activate
+#define A 6
+#define B 7
+#define C 9
+#define D 10
+#define E 11
+#define F A0
+#define G A1
+#define P A2
 
 
 int del = 5; // Delay between updating display (ms)
